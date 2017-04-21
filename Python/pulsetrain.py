@@ -12,7 +12,7 @@ Dependencies:
     - PulsePal python package
 
 Known issues:
-    - there is a physical constrain on the pulse frequency determined by the capacitive properties 
+    - there is a physical constraint on the pulse frequency determined by the capacitive properties 
     of your stimulus generator. For instance, setting the pulse frequency to 1000 Hz would result in 
     a pulse width of .0005 ms, which may be too fast for the stimulus generator to send a reliable pulse.
     For typical frequencies between 1 & 100 Hz, this shouldn't be an issue.
@@ -37,14 +37,15 @@ print('Connected to PulsePal, version ' + str(pp.firmwareVersion))
 time.sleep(2)
 
 # set up the pulse train for ch. 1
-pulseFreq = input('pulse Frequency (Hz): ')
-pulseWidth = 1 / pulseFreq / 2; # here we set the pulse width and inter-pulse width equal to one another
-pulseOn = range(pulseFreq) # create a list of pulse indices given the pulse frequency
-pulseOn = [i/float(pulseFreq) for i in pulseOn] # convert the list of pulse indices to values in seconds
-pulseVoltages = [5]*pulseFreq # an array of voltages...all 5V
+pulseFreq = float(input('pulse frequency (Hz): '))
+#pulseWidth = 1 / pulseFreq / 2; # here we set the pulse width and inter-pulse width equal to one another
+pulseWidth = float(input('pulse width (s): '))
+interPulseWidth = 1.0 / pulseFreq - pulseWidth
+pulseOn = [0.0,1/pulseFreq]
+pulseVoltages = [5,5]
 
 # create the custom pulse train and set to Channel 1 of the PulsePal
-pp.interPulseInterval[1] = pulseWidth 
+pp.interPulseInterval[1] = interPulseWidth
 pp.sendCustomPulseTrain(1,pulseOn,pulseVolages) # create custom pulse train # 1
 pp.programOutputChannelParam('customTrainID',1,1) # set channel 1 of the PulsePal to output the pulse train
 pp.programOutputChannelParam("isBiphasic",1,0) # only positive, monophasic step pulses
